@@ -245,7 +245,8 @@ no-x11-tcp-connections
   if gpu_name != None:
     _setup_nvidia_gl()
 
-  with open(f'{tempfile.gettempdir()}/vncrun.py', 'w') as f:
+  vncrun_py = f'{tempfile.gettempdir()}/vncrun.py'
+  with open(vncrun_py, 'w') as f:
     f.write(f"ipython_output = {ipython_output}\n")
     f.write("""\
 import subprocess, secrets, pathlib
@@ -280,7 +281,7 @@ subprocess.run(
 (pathlib.Path.home() / ".xscreensaver").write_text("mode: off\\n")
 """)
   r = subprocess.run(
-                    ["su", "-c", "python3 " + str(vncrun_py), "colab"],
+                    ["su", "-c", "python3 " + vncrun_py, "colab"],
                     check = True,
                     stdout = subprocess.PIPE,
                     universal_newlines = True)
