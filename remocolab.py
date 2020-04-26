@@ -245,9 +245,9 @@ no-x11-tcp-connections
   if gpu_name != None:
     _setup_nvidia_gl()
 
-  vncrun_py = tempfile.gettempdir() / pathlib.Path("vncrun.py")
-  vncrun_py.write_text(f"ipython_output = {ipython_output}\n")
-  vncrun_py.write_text("""\
+  with open(f'{tempfile.gettempdir()}/vncrun.py', 'w') as f:
+    f.write(f"ipython_output = {ipython_output}\n")
+    f.write("""\
 import subprocess, secrets, pathlib
 
 vnc_passwd = secrets.token_urlsafe()[:8]
