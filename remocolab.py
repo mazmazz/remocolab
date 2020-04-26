@@ -247,20 +247,20 @@ no-x11-tcp-connections
 
   vncrun_py = f'{tempfile.gettempdir()}/vncrun.py'
   with open(vncrun_py, 'w') as f:
-    f.write(f"ipython_output = {ipython_output}\n")
+    #f.write(f"ipython_output = {ipython_output}\n")
     f.write("""\
 import subprocess, secrets, pathlib
 
 vnc_passwd = secrets.token_urlsafe()[:8]
 vnc_viewonly_passwd = secrets.token_urlsafe()[:8]
 print("✂️"*24)
-if ipython_output:
-  from IPython.core.display import display, HTML
-  display(HTML(f"<p>VNC password: <input value='{vnc_passwd}' size='{len(vnc_passwd)+5}' type='text' style='font-family:monospace' readonly/></p>"))
-  display(HTML(f"<p>VNC view only password: <input value='{vnc_viewonly_passwd}' size='{len(vnc_viewonly_passwd)+5}' type='text' style='font-family:monospace' readonly/></p>"))
-else:
-  print("VNC password: {}".format(vnc_passwd))
-  print("VNC view only password: {}".format(vnc_viewonly_passwd))
+#if ipython_output:
+#  from IPython.core.display import display, HTML
+#  display(HTML(f"<p>VNC password: <input value='{vnc_passwd}' size='{len(vnc_passwd)+5}' type='text' style='font-family:monospace' readonly/></p>"))
+#  display(HTML(f"<p>VNC view only password: <input value='{vnc_viewonly_passwd}' size='{len(vnc_viewonly_passwd)+5}' type='text' style='font-family:monospace' readonly/></p>"))
+#else:
+print("VNC password: {}".format(vnc_passwd))
+print("VNC view only password: {}".format(vnc_viewonly_passwd))
 print("✂️"*24)
 vncpasswd_input = "{0}\\n{1}".format(vnc_passwd, vnc_viewonly_passwd)
 vnc_user_dir = pathlib.Path.home().joinpath(".vnc")
