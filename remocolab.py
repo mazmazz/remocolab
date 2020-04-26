@@ -85,8 +85,8 @@ def _setupSSHDImpl(ngrok_token, ngrok_region, ipython_output):
   print("✂️"*24)
   if ipython_output:
     from IPython.core.display import display, HTML
-    display(HTML(f"<p>root password: <input value='{root_password}' size='{len(root_password)+10}' type='text'/></p>"))
-    display(HTML(f"<p>{user_name} password: <input value='{user_password}' size='{len(user_password)+10}' type='text'/></p>"))
+    display(HTML(f"<p>root password: <input value='{root_password}' size='{len(root_password)+10}' type='text' readonly/></p>"))
+    display(HTML(f"<p>{user_name} password: <input value='{user_password}' size='{len(user_password)+10}' type='text' readonly/></p>"))
   else:
     print(f"root password: {root_password}")
     print(f"{user_name} password: {user_password}")
@@ -118,7 +118,7 @@ def _setupSSHDImpl(ngrok_token, ngrok_region, ipython_output):
   print("✂️"*24)
   cmd_string = f"ssh {ssh_common_options} -p {port} {user_name}@{hostname}"
   if ipython_output:
-    display(HTML(f"<p><input value="{cmd_string}" size="{len(cmd_string)+10}" type="text"/></p>"))
+    display(HTML(f"<p><input value='{cmd_string}' size='{len(cmd_string)+10}' type='text' readonly/></p>"))
   else:
     print(cmd_string)
   print("✂️"*24)
@@ -127,7 +127,7 @@ def _setupSSHDImpl(ngrok_token, ngrok_region, ipython_output):
   print("✂️"*24)
   cmd_string = f"ssh {ssh_common_options} -L 5901:localhost:5901 -p {port} {user_name}@{hostname}"
   if ipython_output:
-    display(HTML(f"<p><input value="{cmd_string}" size="{len(cmd_string)+10}" type="text"/></p>"))
+    display(HTML(f"<p><input value='{cmd_string}' size='{len(cmd_string)+10}' type='text' readonly/></p>"))
   else:
     print(cmd_string)
   print("✂️"*24)
@@ -254,8 +254,8 @@ vnc_viewonly_passwd = secrets.token_urlsafe()[:8]
 print("✂️"*24)
 if ipython_output:
   from IPython.core.display import display, HTML
-  display(HTML(f"<p>VNC password: <input value='{vnc_passwd}' size='{len(vnc_passwd)+10}' type='text'/></p>"))
-  display(HTML(f"<p>VNC view only password: <input value='{vnc_viewonly_passwd}' size='{len(vnc_viewonly_passwd)+10}' type='text'/></p>"))
+  display(HTML(f"<p>VNC password: <input value='{vnc_passwd}' size='{len(vnc_passwd)+10}' type='text' readonly/></p>"))
+  display(HTML(f"<p>VNC view only password: <input value='{vnc_viewonly_passwd}' size='{len(vnc_viewonly_passwd)+10}' type='text' readonly/></p>"))
 else:
   print("VNC password: {}".format(vnc_passwd))
   print("VNC view only password: {}".format(vnc_viewonly_passwd))
