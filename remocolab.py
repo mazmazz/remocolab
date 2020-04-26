@@ -42,7 +42,7 @@ def _check_gpu_available():
 
   return IPython.utils.io.ask_yes_no("Do you want to continue? [y/n]")
 
-def _setupSSHDImpl(ngrok_token, ngrok_region):
+def _setupSSHDImpl(ngrok_token, ngrok_region, ipython_output):
   #apt-get update
   #apt-get upgrade
   cache = apt.Cache()
@@ -83,8 +83,13 @@ def _setupSSHDImpl(ngrok_token, ngrok_region):
   user_password = secrets.token_urlsafe()
   user_name = "colab"
   print("✂️"*24)
-  print(f"root password: {root_password}")
-  print(f"{user_name} password: {user_password}")
+  if ipython_output:
+    from IPython.core.display import display, HTML
+    display(HTML(f"<p>root password: <input value='{root_password}' size='{len(root_password)+10}' type='text'/></p>"))
+    display(HTML(f"<p>{user_name} password: <input value='{user_password}' size='{len(user_password)+10}' type='text'/></p>"))
+  else:
+    print(f"root password: {root_password}")
+    print(f"{user_name} password: {user_password}")
   print("✂️"*24)
   subprocess.run(["useradd", "-s", "/bin/bash", "-m", user_name])
   subprocess.run(["adduser", user_name, "sudo"], check = True)
@@ -111,15 +116,23 @@ def _setupSSHDImpl(ngrok_token, ngrok_region):
   print("---")
   print("Command to connect to the ssh server:")
   print("✂️"*24)
-  print(f"ssh {ssh_common_options} -p {port} {user_name}@{hostname}")
+  cmd_string = f"ssh {ssh_common_options} -p {port} {user_name}@{hostname}"
+  if ipython_output:
+    display(HTML(f"<p><input value="{cmd_string}" size="{len(cmd_string)+10}" type="text"/></p>"))
+  else:
+    print(cmd_string)
   print("✂️"*24)
   print("---")
   print("If you use VNC:")
   print("✂️"*24)
-  print(f"ssh {ssh_common_options} -L 5901:localhost:5901 -p {port} {user_name}@{hostname}")
+  cmd_string = f"ssh {ssh_common_options} -L 5901:localhost:5901 -p {port} {user_name}@{hostname}"
+  if ipython_output:
+    display(HTML(f"<p><input value="{cmd_string}" size="{len(cmd_string)+10}" type="text"/></p>"))
+  else:
+    print(cmd_string)
   print("✂️"*24)
 
-def setupSSHD(ngrok_token = None, ngrok_region = None, check_gpu_available = False):
+def setupSSHD(ngrok_token = None, ngrok_region = None, check_gpu_available = False, ipython_output = False):
   if check_gpu_available and not _check_gpu_available():
     return False
 
@@ -141,7 +154,7 @@ def setupSSHD(ngrok_token = None, ngrok_region = None, check_gpu_available = Fal
     print("in - India (Mumbai)")
     ngrok_region = region = input()
 
-  _setupSSHDImpl(ngrok_token, ngrok_region)
+  _setupSSHDImpl(ngrok_token, ngrok_region, ipython_output)
   return True
 
 def _setup_nvidia_gl():
@@ -201,7 +214,7 @@ def _setup_nvidia_gl():
   # You can create /dev/tty0 with "mknod /dev/tty0 c 4 0" but you will get permision denied error.
   subprocess.Popen(["Xorg", "-seat", "seat-1", "-allowMouseOpenFail", "-novtswitch", "-nolisten", "tcp"])
 
-def _setupVNC():
+def _setupVNC(ipython_output):
   libjpeg_ver = "2.0.3"
   virtualGL_ver = "2.6.2"
   turboVNC_ver = "2.2.3"
@@ -239,8 +252,13 @@ import subprocess, secrets, pathlib
 vnc_passwd = secrets.token_urlsafe()[:8]
 vnc_viewonly_passwd = secrets.token_urlsafe()[:8]
 print("✂️"*24)
-print("VNC password: {}".format(vnc_passwd))
-print("VNC view only password: {}".format(vnc_viewonly_passwd))
+if ipython_output:
+  from IPython.core.display import display, HTML
+  display(HTML(f"<p>VNC password: <input value='{vnc_passwd}' size='{len(vnc_passwd)+10}' type='text'/></p>"))
+  display(HTML(f"<p>VNC view only password: <input value='{vnc_viewonly_passwd}' size='{len(vnc_viewonly_passwd)+10}' type='text'/></p>"))
+else:
+  print("VNC password: {}".format(vnc_passwd))
+  print("VNC view only password: {}".format(vnc_viewonly_passwd))
 print("✂️"*24)
 vncpasswd_input = "{0}\\n{1}".format(vnc_passwd, vnc_viewonly_passwd)
 vnc_user_dir = pathlib.Path.home().joinpath(".vnc")
@@ -267,6 +285,6 @@ subprocess.run(
                     universal_newlines = True)
   print(r.stdout)
 
-def setupVNC(ngrok_token = None, ngrok_region = None):
-  if setupSSHD(ngrok_token, ngrok_region, True):
-    _setupVNC()
+def setupVNC(ngrok_token = None, ngrok_region = None, ipython_output = False):
+  if setupSSHD(ngrok_token, ngrok_region, True, ipython_output):
+    _setupVNC(ipython_output)
